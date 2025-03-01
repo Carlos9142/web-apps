@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎈 Diviértete con las Tablas de Multiplicar 🎉</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: url('https://www.transparenttextures.com/patterns/bright-squares.png');
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-blue-200 flex flex-col justify-center items-center h-screen text-center p-4">
+    <h1 class="text-4xl font-bold text-yellow-600 mb-4">🎉 ¡Bienvenido al Juego de las Tablas de Multiplicar! 🎈</h1>
+    <p class="text-lg text-gray-700 mb-4">Responde correctamente antes de que el tiempo se agote. ¡Cada nivel será más
+        difícil! ⏳</p>
+
+    <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-md w-full fade-in">
+        <p class="text-xl mb-2">⏳ Tiempo restante: <span id="cronometro" class="font-bold text-red-600">10</span>
+            segundos</p>
+        <p class="text-lg mb-2">¿Cuánto es <span id="num1" class="font-bold"></span> × <span id="num2"
+                class="font-bold"></span>?</p>
+        <input id="respuesta" type="number" class="w-full p-2 border rounded-md text-center mb-2 text-xl">
+        <button onclick="verificarRespuesta()" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">✅
+            Comprobar</button>
+        <p id="mensaje" class="text-lg mt-2 font-bold"></p>
+        <p class="mt-4">Puntuación: <span id="aciertos" class="text-green-600 font-bold">0</span> ✅ | <span id="errores"
+                class="text-red-600 font-bold">0</span> ❌</p>
+        <button onclick="reiniciarJuego()" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">🔄
+            Reiniciar</button>
+    </div>
+
+    <script>
+        let num1, num2, aciertos = 0, errores = 0, tiempo = 10, nivel = 1;
+        let temporizador;
+
+        function generarPregunta() {
+            clearInterval(temporizador);
+            tiempo = 10;
+            document.getElementById('cronometro').textContent = tiempo;
+            temporizador = setInterval(actualizarTiempo, 1000);
+
+            let maxNum = 9 + (nivel * 2);
+            num1 = Math.floor(Math.random() * maxNum) + 1;
+            num2 = Math.floor(Math.random() * maxNum) + 1;
+            document.getElementById('num1').textContent = num1;
+            document.getElementById('num2').textContent = num2;
+            document.getElementById('respuesta').value = '';
+        }
+
+        function verificarRespuesta() {
+            let respuesta = parseInt(document.getElementById('respuesta').value);
+            let mensaje = document.getElementById('mensaje');
+            if (respuesta === num1 * num2) {
+                mensaje.textContent = '¡Correcto! 🎉';
+                mensaje.classList.add('text-green-600');
+                mensaje.classList.remove('text-red-600');
+                aciertos++;
+                if (aciertos % 5 === 0) {
+                    nivel++;
+                }
+            } else {
+                mensaje.textContent = 'Incorrecto 😞';
+                mensaje.classList.add('text-red-600');
+                mensaje.classList.remove('text-green-600');
+                errores++;
+            }
+            document.getElementById('aciertos').textContent = aciertos;
+            document.getElementById('errores').textContent = errores;
+            setTimeout(generarPregunta, 1500);
+        }
+
+        function actualizarTiempo() {
+            if (tiempo > 0) {
+                tiempo--;
+                document.getElementById('cronometro').textContent = tiempo;
+            } else {
+                clearInterval(temporizador);
+                errores++;
+                document.getElementById('errores').textContent = errores;
+                document.getElementById('mensaje').textContent = '⏳ ¡Tiempo agotado! ❌';
+                setTimeout(generarPregunta, 1500);
+            }
+        }
+
+        function reiniciarJuego() {
+            aciertos = 0;
+            errores = 0;
+            nivel = 1;
+            document.getElementById('aciertos').textContent = aciertos;
+            document.getElementById('errores').textContent = errores;
+            document.getElementById('mensaje').textContent = '';
+            generarPregunta();
+        }
+
+        generarPregunta();
+    </script>
+</body>
+
+</html>
